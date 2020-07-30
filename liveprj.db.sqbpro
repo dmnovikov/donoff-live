@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="/home/dmn/py_prj/donoff_live/live.db" foreign_keys="1"/><window><current_tab id="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="1089"/><expanded_item id="0" parent="1"/><expanded_item id="6" parent="0"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="definitions"/><default_encoding codec=""/><browsetable_info data="AAAACAAAABYAcwBlAG4AcwBvAHIAcwBfAG8AdQB0AAAABAAAAAEAAAABAAAABAAAASIAAAAAAAAAAAD//////////wAAAAD/////AAAAFABzAGUAbgBzAG8AcgBzAF8AaQBuAAAAAAAAAAAAAAAAAAAAAAAAAAAA//////////8AAAAA/////wAAAA4AcwBlAG4AcwBvAHIAcwAAAAAAAAAAAAAAAQAAAAQAAADZAAAAAAAAAAAA//////////8AAAAA/////wAAAA4AbABvAGcAZwBpAG4AZwAAAAAAAAAAAAAAAgAAAAUAAAB3AAAABAAAAI4AAAAAAAAAAAD//////////wAAAAD/////AAAAFABsAG8AZwBfAHIAZQBsAGEAeQBzAAAAAAAAAAAAAAABAAAABAAAAGQAAAAAAAAAAAD//////////wAAAAD/////AAAAEgBsAG8AZwBfAG8AbgBvAGYAZgAAAAAAAAAAAAAAAwAAAAcAAAChAAAABQAAAGQAAAAEAAAA/AAAAAAAAAAAAP//////////AAAAAP////8AAAAIAGwAaQB2AGUAAAABAAAAAAAAAAEAAAAEAAABegAAAAAAAAAAAP//////////AAAAAP////8AAAAWAGQAZQBmAGkAbgBpAHQAaQBvAG4AcwAAAAEAAAABAAAAAAAAAAQAAAAEAAAAAAAAAAMAAAAAAAAAAgAAAAAAAAABAAAAAAAAAAAA//////////8AAAAA/////w=="/></tab_browse><tab_sql><sql name="q2.sql">select live.user, live.dev, coalesce(definitions.definition,'n\a') as definition, live.last_seen, live.time_up
+ from live left join definitions on live.user=definitions.user and live.dev=definitions.dev</sql><sql name="q1">select live.id, live.user, live.dev, definitions.definition, live.last_seen from live 
+inner join definitions 
+on live.dev=definitions.dev and live.user=definitions.user</sql><sql name="SQL 4">CREATE TABLE &quot;logging&quot; ( 
+
+`id` INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, 
+`user` TEXT, 
+`dev` TEXT, 
+`time` TEXT, 
+`type` TEXT, 
+`msg` TEXT, 
+`full_msg` TEXT
+
+)</sql><sql name="SQL 5">CREATE TABLE &quot;log_relays&quot; 
+( 
+`id` INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, 
+`dev_id` INTEGER, 
+`time` TEXT, 
+`name` TEXT,
+`status` INTEGER, 
+`src` INTEGER, 
+`msg` TEXT 
+
+)</sql><sql name="SQL 6">insert into log_relays (dev_id, time, name, status) values (
+(select id from live where user='donoff' and dev='h2'), 
+'2020-07-30 02:06:31.690309',
+'r1',
+1)
+</sql><sql name="SQL 7">select live.user, live.dev, log_relays.time, log_relays.rname, log_relays.state from live
+inner join log_relays on live.id=log_relays.dev_id order by log_relays.time desc</sql><sql name="SQL 8">CREATE TABLE &quot;sensors&quot; 
+( `id` INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, 
+`user` TEXT, 
+`dev` TEXT, 
+`time` TEXT, 
+`type` INTEGER, 
+`name` TEXT, 
+`mult` INTEGER, 
+`value` INTEGER 
+)</sql><current_tab id="6"/></tab_sql></sqlb_project>

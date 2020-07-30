@@ -1,0 +1,14 @@
+"live1.db"
+lib/*
+bin/*
+live.db
+conf.donoff
+mymqtt.py
+q1
+q2.sql
+.vscode/settings.json
+__pycache__/re.cpython-36.pyc
+include/python3.6m
+live1.db
+live.db-journal
+donof_live.code-workspace
