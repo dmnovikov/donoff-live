@@ -22,6 +22,10 @@ TOPICS_LOG="/donoff/+/out/log"
 TOPICS_INFO="/donoff/+/out/info"
 TOPICS_RELAYS1="/donoff/+/out/b1"
 TOPICS_RELAYS2="/donoff/+/out/b2"
+TOPICS_SCT01="/donoff/+/out/sct013_1"
+TOPICS_SCT02="/donoff/+/out/sct013_2"
+TOPICS_SCT03="/donoff/+/out/sct013_3"
+TOPICS_SCT_3ph="/donoff/+/out/sct013x3"
 
 
 #logging.basicConfig()
@@ -66,6 +70,11 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe(TOPICS_INFO)
     client.subscribe(TOPICS_RELAYS1)
     client.subscribe(TOPICS_RELAYS2)
+    client.subscribe(TOPICS_SCT01)
+    client.subscribe(TOPICS_SCT02)
+    client.subscribe(TOPICS_SCT03)
+    client.subscribe(TOPICS_SCT_3ph)
+    
 
 
 def on_disconnect(client, userdata, rc):
@@ -108,20 +117,22 @@ def on_message(client, userdata, msg):
     if re.search('/donoff/.+/out/temp_in',msg.topic):
 
         sensor_val=int (float(msg_decoded)*100)
-        #curs.execute("insert into sensors_in (user,dev,time, type, mult, value) values (?,?,?,?,?,?)",(t_user, t_dev, dt, 0, 100, sensor_val))
+        curs.execute("insert into sensors_in (user,dev,time, type, mult, value) \
+            values (?,?,?,?,?,?)",(t_user, t_dev, dt, 0, 100, sensor_val))
 
-        curs.execute("insert into sensors_all (dev_id, time, type, name, mult, value) \
-                    values ((select id from live where user=? and dev=?), ?, ?, ?,?,?)", \
-                    (t_user, t_dev,dt, 0, 't_in', 100, sensor_val))
+        #curs.execute("insert into sensors_all (dev_id, time, type, name, mult, value) \
+        #            values ((select id from live where user=? and dev=?), ?, ?, ?,?,?)", \
+        #            (t_user, t_dev,dt, 0, 't_in', 100, sensor_val))
     
     if re.search('/donoff/.+/out/temp_out',msg.topic):
 
         sensor_val=int (float(msg_decoded)*100)
-        #curs.execute("insert into sensors_out (user,dev,time, type, mult, value) values (?,?,?,?,?,?)",(t_user, t_dev, dt, 0, 100, sensor_val))
+        curs.execute("insert into sensors_out (user,dev,time, type, mult, value) \
+            values (?,?,?,?,?,?)",(t_user, t_dev, dt, 0, 100, sensor_val))
 
-        curs.execute("insert into sensors_all (dev_id, time, type, name, mult, value) \
-                    values ((select id from live where user=? and dev=?), ?, ?, ?,?,?)", \
-                    (t_user, t_dev,dt, 0, 't_out', 100, sensor_val))
+        #curs.execute("insert into sensors_all (dev_id, time, type, name, mult, value) \
+        #            values ((select id from live where user=? and dev=?), ?, ?, ?,?,?)", \
+        #            (t_user, t_dev,dt, 0, 't_out', 100, sensor_val))
 
     if re.search('/donoff/.+/out/log',msg.topic) or re.search('/donoff/.+/out/info',msg.topic):
 
@@ -210,9 +221,26 @@ def on_message(client, userdata, msg):
         #print ("relay log", "rname=", rname, " dev=", t_dev, " rname=", rname, " msg=", msg_decoded, " state=", state)
         #logging.debug("relay log", "rname=", rname)
         
-        curs.execute("insert into log_relays (dev_id, time, rname, state) \
-                    values ((select id from live where user=? and dev=?), ?, ?, ?)", \
-                    (t_user, t_dev,dt, rname, msg_decoded))
+        # curs.execute("insert into log_relays (dev_id, time, rname, state) \
+        #             values ((select id from live where user=? and dev=?), ?, ?, ?)", \
+        #             (t_user, t_dev,dt, rname, msg_decoded))
+
+        curs.execute("insert into log_relays_ud (user,dev, time, rname, state) \
+                    values (?,?, ?, ?, ?)", \
+                    (t_user, t_dev, dt, rname, msg_decoded))
+        pass
+
+    if re.search('/donoff/.+/out/sct013.+',msg.topic):
+        expr_relays=re.match(r'/donoff/.+/out/(sct013.+)', msg.topic)
+        rname=expr_relays.group(1)
+        sensor_val=int (float(msg_decoded)*100)
+        
+        #print ("relay log", "rname=", rname, " dev=", t_dev, " rname=", rname, " msg=", msg_decoded, " sensorval=", sensor_val)
+        curs.execute("insert into sensors (user,dev,time, type, name, mult, value) \
+            values (?,?,?,?,?,?,?)",(t_user, t_dev, dt, 1, rname, 100, sensor_val))
+
+
+        
         pass
 
             
